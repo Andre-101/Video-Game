@@ -1,7 +1,7 @@
 package model;
 
 public class Enemy {
-
+	//Attributes
 	private String idName;
 	private EnemyType type;
 	private int defeatScore;
@@ -9,15 +9,7 @@ public class Enemy {
 	private int[] position;
 	private boolean defeatedByPlayer;
 
-	/**
-	 * 
-	 * @param idName
-	 * @param type
-	 * @param defeatScore
-	 * @param victoryScore
-	 * @param position
-	 * @param defeatedByPlayer
-	 */
+	//Builder
 	public Enemy(String idName, int type, int defeatScore, int victoryScore, int[] position, boolean defeatedByPlayer) {
 		this.idName =idName;
 		this.type = EnemyType.values()[type];
@@ -27,14 +19,22 @@ public class Enemy {
 		this.defeatedByPlayer = defeatedByPlayer;
 	}
 
+	@Override
+	public String toString() {
+		return "Enemy{" +
+				"idName='" + idName + '\'' +
+				", type=" + type +
+				", defeatScore=" + defeatScore +
+				", victoryScore=" + victoryScore +
+				", position=" + "x: "+position[0]+", y: "+position[1] +
+				'}';
+	}
+
+	//Setters and getters
 	public String getIdName() {
 		return idName;
 	}
 
-	/**
-	 * 
-	 * @param idName
-	 */
 	public void setIdName(String idName) {
 		this.idName = idName;
 	}
@@ -43,10 +43,6 @@ public class Enemy {
 		return this.type;
 	}
 
-	/**
-	 * 
-	 * @param type
-	 */
 	public void setType(EnemyType type) {
 		this.type = type;
 	}
@@ -55,22 +51,13 @@ public class Enemy {
 		return this.defeatScore;
 	}
 
-	/**
-	 * 
-	 * @param defeatScore
-	 */
 	public void setDefeatScore(int defeatScore) {
 		this.defeatScore = defeatScore;
 	}
-
 	public int getVictoryScore() {
 		return this.victoryScore;
 	}
 
-	/**
-	 * 
-	 * @param victoryScore
-	 */
 	public void setVictoryScore(int victoryScore) {
 		this.victoryScore = victoryScore;
 	}
@@ -79,10 +66,6 @@ public class Enemy {
 		return this.position;
 	}
 
-	/**
-	 * 
-	 * @param position
-	 */
 	public void setPosition(int[] position) {
 		this.position = position;
 	}
@@ -91,12 +74,7 @@ public class Enemy {
 		return this.defeatedByPlayer;
 	}
 
-	/**
-	 * 
-	 * @param defeatedByPlayer
-	 */
 	public void setDefeatedByPlayer(boolean defeatedByPlayer) {
 		this.defeatedByPlayer = defeatedByPlayer;
 	}
-
 }
