@@ -2,12 +2,12 @@ package model;
 
 public class Enemy {
 	//Attributes
-	private String idName;
+	private final String idName;
 	private EnemyType type;
-	private int defeatScore;
-	private int victoryScore;
-	private int[] position;
-	private boolean defeatedByPlayer;
+	private final int defeatScore;
+	private final int victoryScore;
+	private final int[] position;
+	private final boolean defeatedByPlayer;
 
 	//Builder
 	public Enemy(String idName, int type, int defeatScore, int victoryScore, int[] position, boolean defeatedByPlayer) {
@@ -35,10 +35,6 @@ public class Enemy {
 		return idName;
 	}
 
-	public void setIdName(String idName) {
-		this.idName = idName;
-	}
-
 	public EnemyType getType() {
 		return this.type;
 	}
@@ -51,30 +47,7 @@ public class Enemy {
 		return this.defeatScore;
 	}
 
-	public void setDefeatScore(int defeatScore) {
-		this.defeatScore = defeatScore;
-	}
 	public int getVictoryScore() {
 		return this.victoryScore;
-	}
-
-	public void setVictoryScore(int victoryScore) {
-		this.victoryScore = victoryScore;
-	}
-
-	public int[] getPosition() {
-		return this.position;
-	}
-
-	public void setPosition(int[] position) {
-		this.position = position;
-	}
-
-	public boolean getDefeatedByPlayer() {
-		return this.defeatedByPlayer;
-	}
-
-	public void setDefeatedByPlayer(boolean defeatedByPlayer) {
-		this.defeatedByPlayer = defeatedByPlayer;
 	}
 }

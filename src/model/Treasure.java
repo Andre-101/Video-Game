@@ -4,9 +4,9 @@ public class Treasure {
 
 	//Attributes
 	private String name;
-	private String imageUrl;
-	private int gainScore;
-	private int[] position;
+	private final String imageUrl;
+	private final int gainScore;
+	private final int[] position;
 
 	//Builder
 	public Treasure(String name, String imageUrl, int gainScore, int[] position) {
@@ -34,28 +34,9 @@ public class Treasure {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
 	public int getGainScore() {
 		return gainScore;
 	}
 
-	public void setGainScore(int gainScore) {
-		this.gainScore = gainScore;
-	}
 
-	public int[] getPosition() {
-		return position;
-	}
-
-	public void setPosition(int[] position) {
-		this.position = position;
-	}
 }

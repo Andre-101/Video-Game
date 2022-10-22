@@ -98,13 +98,14 @@ public class Manager {
     }
 
     /**
-     * <b>Name:operation</b><br>
+     * <b>Name:topFive</b><br>
      * This method shows the information of the five players with th highest score
      * <b>Pre:</b> The players exist and have a score <br>
      * <b>Post:</b> The five highest scores have been shown <br>
      */
     private void topFive() {
-        System.out.println(controller.topFiveScorePlayers());
+        if (controller.topFiveScorePlayers().equals(""))System.out.println("No players registered yet");
+        else System.out.println(controller.topFiveScorePlayers());
     }
 
     /**
@@ -119,9 +120,9 @@ public class Manager {
 
     /**
      * <b>Name:mostRepeatedTreasure</b><br>
-     * Este metodo busca el enemigo que le da mas puntos al jugador en todo el juego
-     * <b>Pre:</b> Los tesoros existan y contengan nombres <br>
-     * <b>Pos:</b> Se ha encontrado el enemigo que da mas puntos <br>
+     * This method finds the enemy that gives the most points to the player once its defeated.
+     * <b>Pre:</b> The enemies exist <br>
+     * <b>Pos:</b> The most generous enemy has been found <br>
      */
     private void mostGenerousEnemy() {
         System.out.println(controller.mostGenerousEnemy());
@@ -153,7 +154,7 @@ public class Manager {
 
     /**
      * <b>Name:showQuantityTreasures</b><br>
-     * this methid looks for the quatity of a type of treasure (It´s name)
+     * this method looks for the quantity of a type of treasure (It´s name)
      * <b>Pre:</b> The treasures exist <br>
      * <b>Pos:</b> the number of treasures have benn shown <br>
      */
@@ -226,9 +227,12 @@ public class Manager {
         int gainScore = sc.nextInt();
         System.out.println(("Type treasure quantity"));
         int quantity = validateInput(1, controller.getNumberTreasuresAvailable());
-        controller.setNumberTreasuresAvailable(controller.getNumberTreasuresAvailable()-quantity);
-        controller.registerTreasureToLevel(name, imageUrl, gainScore, quantity,level-1);
-        controller.defaultDifficultyLevel(level-1);
+        if (controller.getNumberTreasuresAvailable() < quantity) System.out.println("No space available to save this quantity of treasures in the game");
+        else {
+            controller.setNumberTreasuresAvailable(controller.getNumberTreasuresAvailable()-quantity);
+            controller.registerTreasureToLevel(name, imageUrl, gainScore, quantity,level-1);
+            controller.defaultDifficultyLevel(level-1);
+        }
     }
 
     /**
@@ -241,15 +245,17 @@ public class Manager {
         int level = validateInput(1,10);
         System.out.println("Type enemy name");
         String name = sc.nextLine();
-        System.out.println("Enemy type:\n  (1)OGRE\n  (2)ABSTRACT\n  (3)BOSS\n  (4)MAGICAL");
+        System.out.println("Type class enemy:\n  (1)OGRE\n  (2)ABSTRACT\n  (3)BOSS\n  (4)MAGICAL");
         int enemyType = sc.nextInt();
         System.out.println("Type score if player is defeated, only positive number");
         int defeatScore = sc.nextInt();
         System.out.println(("Type score if player wins"));
         int victoryScore = sc.nextInt();
-        controller.setNumberEnemiesAvailable(controller.getNumberEnemiesAvailable()-1);
-        if (!controller.registerEnemyToLevel(name, enemyType-1, defeatScore, victoryScore, level-1)) System.out.println("No space available to save enemy in the game");
-        controller.defaultDifficultyLevel(level-1);
+        if (controller.getNumberEnemiesAvailable() == 0) System.out.println("No space available to save enemy in the game");
+        else if (controller.registerEnemyToLevel(name, enemyType-1, defeatScore, victoryScore, level-1)){
+            controller.defaultDifficultyLevel(level-1);
+            controller.setNumberEnemiesAvailable(controller.getNumberEnemiesAvailable()-1);
+        } else System.out.println("The enemy already exists");
     }
 
     /**
@@ -263,7 +269,7 @@ public class Manager {
             System.out.println("Type nickname, if it already exists it will be requested again");
             nickname = sc.nextLine();
         } while (controller.verifyNickname(nickname));
-        System.out.println("Type enemy name");
+        System.out.println("Type the name");
         String name = sc.nextLine();
         if (!controller.registerPlayer(nickname,name)) System.out.println("No space available for save enemy in the game");
     }

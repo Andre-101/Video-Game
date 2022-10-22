@@ -6,16 +6,14 @@ public class Controller {
 	//Attributes
 	private int numberEnemiesAvailable;
 	private int numberTreasuresAvailable;
-	private int[] resolutionHD;
-	private String[] treasureName;
-	private int[] treasureNumber;
+	private final int[] resolutionHD;
+	private final String[] treasureName;
+	private final int[] treasureNumber;
 
 	//Relationship
-	private Random rd;
-	private Player[] players;
-	private Level[] levels;
-	private Enemy enemy;
-	private Treasure treasure;
+	private final Random rd;
+	private final Player[] players;
+	private final Level[] levels;
 
 	//Builder
 	public Controller() {
@@ -42,7 +40,7 @@ public class Controller {
 	public boolean registerPlayer(String nickname, String name) {
 		for (int i = 0; i < players.length; i++){
 			if (players[i] == null){
-				players[i] = new Player(nickname, name,10, 5, 1);
+				players[i] = new Player(nickname, name,10, 5, levels[i]);
 				return true;
 			}
 		}
@@ -73,7 +71,7 @@ public class Controller {
 	 */
 	public void registerLevel() {
 		for (int i = 0; i < levels.length; i++) {
-			levels[i] = new Level(i+1,0);
+			levels[i] = new Level(i+1,(i+1)*1000,0);
 		}
 	}
 
@@ -85,7 +83,7 @@ public class Controller {
 	 * @param name String. Variable that saves the name of the treasure. name != ""
 	 * @param imageUrl String. Variable that saves the url of the image of the treasure. imageUrl != ""
 	 * @param gainScore int. Variable that saves the score that gives the treasure to the player. gainScore != null
-	 * @param quantity int. Variable that saves the amount of the same treasure. guantity != null
+	 * @param quantity int. Variable that saves the amount of the same treasure. quantity != null
 	 * @param idLevel int. Variable that saves the index of the level. idLevel != null
 	 */
 	public void registerTreasureToLevel(String name, String imageUrl, int gainScore, int quantity, int idLevel) {
@@ -126,7 +124,7 @@ public class Controller {
 	 * <b>Name:registerEnemyToLevel</b><br>
 	 * This method registers a enemy to level
 	 * <b>Pre:</b> The parameters must be different from null <br>
-	 * <b>Pos:</b> El enemigo ha sido registrado <br>
+	 * <b>Pos:</b> The enemy had been registered <br>
 	 * @param idName String. The variable saves the name of the enemy. idName != ""
 	 * @param enemyType int. The variable saves the type of enemy. enemyType != null
 	 * @param defeatScore int. The variable saves the points that reduce the score of the player. defeatScore != null
@@ -160,9 +158,11 @@ public class Controller {
 	 */
 	public boolean modifyScorePlayer(String nicknamePlayer, int newScorePlayer) {
 		for (int i = 0; i < players.length; i++) {
-			if (players[i].getNickname().equals(nicknamePlayer)){
-				players[i].setScore(newScorePlayer);
-				return true;
+			if (players[i] != null) {
+				if (players[i].getNickname().equals(nicknamePlayer)){
+					players[i].setScore(newScorePlayer);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -174,14 +174,17 @@ public class Controller {
 	 * <b>Pre:</b> The parameters must be different from null <br>
 	 * <b>Pos:</b> The score of the player has increased <br>
 	 * @param nickNamePlayer String. Variable that saves the nickname of the user. nickname != ""
-	 * @param addScore int. The variable that saves the player's score that will incremented
+	 * @param addScore int. The variable that saves the player's score that will increment
 	 * @return a String with the score increment information
 	 */
 	public String increasePlayerLevel(String nickNamePlayer, int addScore) {
 		for (int i = 0; i < players.length; i++) {
-			if (players[i].getNickname().equals(nickNamePlayer)){
-				players[i].setScore(players[i].getScore()+addScore);
-				return verifyLevel(i);
+			if (players[i] != null) {
+				if (players[i].getNickname().equals(nickNamePlayer)) {
+					players[i].setScore(players[i].getScore() + addScore);
+					defaultPlayerLevel(nickNamePlayer);
+					return verifyLevel(i);
+				}
 			}
 		}
 		return "Player not found";
@@ -189,16 +192,16 @@ public class Controller {
 
 	/**
 	 * <b>Name:verifyLevel</b><br>
-	 * Este metodo permite verificar el nivel del jugador e informar sobre el proximo nivel
+	 * This method check the player level and inform about next level
 	 * <b>Pre:</b> The parameters must be different from null <br>
-	 * <b>Pos:</b> The level has been veryfied. <br>
-	 * @param indexPlayer int. Variable that cotains the index where the player is located in the array
-	 * @return a String that informas about the verification of the level
+	 * <b>Pos:</b> The level has been verified. <br>
+	 * @param indexPlayer int. Variable that contains the index where the player is located in the array
+	 * @return a String that inform about the verification of the level
 	 */
 	private String verifyLevel(int indexPlayer) {
 		for (int i = 0; i < levels.length; i++) {
 			if (levels[i].getScoreNextLevel()>players[indexPlayer].getScore()){
-				players[indexPlayer].setNumLevel(i);
+				players[indexPlayer].setLevel(levels[i]);
 				return  "you need "+(levels[i].getScoreNextLevel()-players[indexPlayer].getScore())+" points to level up";
 			}
 		}
@@ -207,33 +210,30 @@ public class Controller {
 
 	/**
 	 * <b>Name:defaultPlayerLevel</b><br>
-	 * This method determins the level of the player
+	 * This method determine the level of the player
 	 * <b>Pre:</b> The parameters must be different from null <br>
 	 * <b>Pos:</b> The level has been set up for the player <br>
 	 * @param nickNamePlayer String. Variable that saves the nickname of the user. nickname != ""
-	 * @return a boolean that informs wether if the level has been set up for the player or the player was not found
 	 */
-	public boolean defaultPlayerLevel(String nickNamePlayer) {
+	public void defaultPlayerLevel(String nickNamePlayer) {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i].getNickname().equals(nickNamePlayer)){
 				for (int j = 0; j < levels.length; j++){
 					if(levels[j].getScoreNextLevel() != 0){
 						if (players[i].getScore() < levels[j].getScoreNextLevel()){
-							players[i].setNumLevel(j+1);
-							return true;
+							players[i].setLevel(levels[j]);
 						}
 					}
 				}
 			}
 		}
-		return false;
 	}
 
 	/**
 	 * <b>Name:showTreasureAndEnemies</b><br>
-	 * Este metodo muestra los tesoros y enemigos de un nivel
+	 * This method show treasure and enemies name of a level
 	 * <b>Pre:</b> The parameters must be different from null <br>
-	 * <b>Pos:</b> The level has been setup for the playre <br>
+	 * <b>Pos:</b> The level has been setup for the player <br>
 	 * @param idLevel int. The variable that saves the index of the level.
 	 * @return a String that shows the treasures and enemies
 	 */
@@ -296,22 +296,27 @@ public class Controller {
 	 * This method finds the enemy that gives the most points to the player once its defeated. 
 	 * <b>Pre:</b> The enemies exist <br>
 	 * <b>Pos:</b> The most generous enemy has been found <br>
-	 * @return a String with the information of the nemy and the level where its located
+	 * @return a String with the information of the enemy and the level where its located
 	 */
 	public String mostGenerousEnemy() {
 		int level = 0;
 		int indexEnemy = 0;
 		int points = 0;
 		for (int i = 0; i < levels.length; i++) {
-			if (levels[i].generousEnemyPoints() != -1){
-				if (points < levels[i].generousEnemyPoints()){
-					level = i;
-					indexEnemy = levels[i].generousEnemyIndex();
-					points = levels[i].generousEnemyPoints();
+			if (levels[i] != null){
+				if (levels[i].generousEnemyPoints() != -1){
+					if (points < levels[i].generousEnemyPoints()){
+						level = i;
+						indexEnemy = levels[i].generousEnemyIndex();
+						points = levels[i].generousEnemyPoints();
+					}
 				}
 			}
 		}
+
+		assert levels[level] != null;
 		if (levels[level].generousEnemyPoints() == -1) return "No enemies registered yet";
+		assert levels[level] != null;
 		return "Enemy is in level "+(level+1)+"\n"+levels[level].showEnemy(indexEnemy);
 	}
 
@@ -339,17 +344,16 @@ public class Controller {
 	 */
 	public String topFiveScorePlayers() {
 		Player[] topPlayers = sortPlayers(players);
-		return "Top 5 score:\n" +
-				"  (1): "+ topPlayers[0].getNickname() + " | Score: "+ topPlayers[0].getScore() +"\n" +
-				"  (2): "+ topPlayers[1].getNickname() + " | Score: "+ topPlayers[1].getScore() +"\n" +
-				"  (3): "+ topPlayers[2].getNickname() + " | Score: "+ topPlayers[2].getScore() +"\n" +
-				"  (4): "+ topPlayers[3].getNickname() + " | Score: "+ topPlayers[3].getScore() +"\n" +
-				"  (5): "+ topPlayers[4].getNickname() + " | Score: "+ topPlayers[4].getScore();
+		String message = "";
+		for (int i = 0; i < topPlayers.length; i++){
+			if (topPlayers[i] != null) message += "  ("+(i+1)+"): "+ topPlayers[i].getNickname() + " | Score: "+ topPlayers[0].getScore() +"\n";
+		}
+		return message;
 	}
 
 	/**
 	 * <b>Name:sortPlayers</b><br>
-	 * This method organizes the player in an array from bigest to the smallest score
+	 * This method organizes the player in an array from biggest to the smallest score
 	 * <b>Pre:</b> tHe players exist <br>
 	 * <b>Pos:</b> The players have been organized <br>
 	 * @param player Player[]. The array that contains the players. player[] != null
@@ -358,11 +362,15 @@ public class Controller {
 	public Player[] sortPlayers(Player[] player){
 		Player max;
 		for(int i = 0; i < player.length-1; i++){
-			for (int j = i; j < player.length-1; j++){
-				if(player[i].getScore() < player[j+1].getScore()){
-					max = player[j+1];
-					player[j+1] = player[i];
-					player[i] = max;
+			if (player[i] != null){
+				for (int j = i; j < player.length-1; j++){
+					if (player[j] != null) {
+						if(player[i].getScore() < player[j+1].getScore()){
+							max = player[j+1];
+							player[j+1] = player[i];
+							player[i] = max;
+						}
+					}
 				}
 			}
 		}
@@ -386,27 +394,7 @@ public class Controller {
 		this.numberTreasuresAvailable = numberTreasuresAvailable;
 	}
 
-	public int[] getResolutionHD() {
-		return resolutionHD;
-	}
-
-	public void setResolutionHD(int[] resolutionHD) {
-		this.resolutionHD = resolutionHD;
-	}
-
 	public String[] getTreasureName() {
 		return treasureName;
-	}
-
-	public void setTreasureName(String[] treasureName) {
-		this.treasureName = treasureName;
-	}
-
-	public int[] getTreasureNumber() {
-		return treasureNumber;
-	}
-
-	public void setTreasureNumber(int[] treasureNumber) {
-		this.treasureNumber = treasureNumber;
 	}
 }

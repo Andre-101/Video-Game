@@ -3,23 +3,18 @@ package model;
 public class Player {
 
 	//Attributes
-	private String nickname;
+	private final String nickname;
 	private String name;
 	private int score;
-	private int lifes;
-	private int numLevel;
+	private final int lives;
 	private Level level;
 
 	//Builder
-	public Player(String nickname, String name, int score, int lifes, int numLevel) {
+	public Player(String nickname, String name, int score, int lives, Level level) {
 		this.nickname = nickname;
 		this.name = name;
 		this.score = score;
-		this.lifes = lifes;
-		this.numLevel = numLevel;
-	}
-
-	public void addLevel(Level level) {
+		this.lives = lives;
 		this.level = level;
 	}
 
@@ -29,7 +24,7 @@ public class Player {
 				"nickname='" + nickname + '\'' +
 				", name='" + name + '\'' +
 				", score=" + score +
-				", lifes=" + lifes +
+				", lives=" + lives +
 				", level=" + level +
 				'}';
 	}
@@ -37,10 +32,6 @@ public class Player {
 	//Setters and getters
 	public String getNickname() {
 		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
 	}
 
 	public String getName() {
@@ -57,22 +48,6 @@ public class Player {
 
 	public void setScore(int score) {
 		this.score = score;
-	}
-
-	public int getLifes() {
-		return lifes;
-	}
-
-	public void setLifes(int lifes) {
-		this.lifes = lifes;
-	}
-
-	public int getNumLevel() {
-		return numLevel;
-	}
-
-	public void setNumLevel(int numLevel) {
-		this.numLevel = numLevel;
 	}
 
 	public void setLevel(Level level) {

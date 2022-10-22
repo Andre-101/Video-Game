@@ -5,8 +5,8 @@ import java.util.Arrays;
 public class Level {
 
 	//Attributes
-	private int idLevel;
-	private int scoreNextLevel;
+	private final int idLevel;
+	private final int scoreNextLevel;
 	private Difficulty difficulty;
 
 	//Relationship
@@ -14,12 +14,12 @@ public class Level {
 	private final Treasure[] treasures;
 
 	//Builder
-	public Level(int idLevel, int difficulty) {
+	public Level(int idLevel, int scoreNextLevel, int difficulty) {
 		this.idLevel = idLevel;
+		this.scoreNextLevel = scoreNextLevel;
 		this.difficulty = Difficulty.values()[difficulty];
 		this.treasures = new Treasure[50];
 		this.enemies = new Enemy[25];
-		scoreNextLevel = 0;
 	}
 
 	/**
@@ -46,9 +46,9 @@ public class Level {
 	 * <b>Name:verifyName</b><br>
 	 * This method verifies if the enemy already exists
 	 * <b>Pre:</b> The parameters must be different from null <br>
-	 * <b>Pos:</b> The name has been veryfied <br>
+	 * <b>Pos:</b> The name has been verified <br>
 	 * @param idName String. The variable saves the name of the enemy. idName != ""
-	 * @return a boolean that informs if it faound a repeated name
+	 * @return a boolean that informs if it found a repeated name
 	 */
 	private boolean verifyName(String idName) {
 		for (int i = 0; i < enemies.length; i++) {
@@ -64,7 +64,7 @@ public class Level {
 	 * This method adds a treasure.
 	 * <b>Pre:</b> The parameters must be different from null <br>
 	 * <b>Pos:</b> It registers a new treasure into the array <br>
-	 * @param treasure Treasure. Variable tbat saves the treasure. treasure != null
+	 * @param treasure Treasure. Variable that saves the treasure. treasure != null
 	 */
 	public void addTreasure(Treasure treasure) {
 		for (int i = 0; i < treasures.length; i++){
@@ -83,13 +83,11 @@ public class Level {
 	public void defaultDifficulty() {
 		int gainScoreTreasures = 0;
 		int defeatScoreEnemies = 0;
-		if (enemies == null || treasures == null){
-			difficulty = Difficulty.UNSPECIFIED;
-		} else {
-			for (int i = 0; i < treasures.length; i++){
-				gainScoreTreasures += treasures[i].getGainScore();
-				if (i < enemies.length) defeatScoreEnemies += enemies[i].getDefeatScore();
+		for (int i = 0; i < treasures.length; i++) {
+			if (i < enemies.length) {
+				if (enemies[i] != null) defeatScoreEnemies += enemies[i].getDefeatScore();
 			}
+			if (treasures[i] != null) gainScoreTreasures += treasures[i].getGainScore();
 		}
 		if (gainScoreTreasures == defeatScoreEnemies){
 			if (gainScoreTreasures == 0) difficulty = Difficulty.UNSPECIFIED;
@@ -102,7 +100,7 @@ public class Level {
 
 	/**
 	 * <b>Name:numberTreasures</b><br>
-	 * This method looks for the amount of trasures with the same name
+	 * This method looks for the amount of treasures with the same name
 	 * <b>Pre:</b> The parameters must be different from null <br>
 	 * <b>Pos:</b> The treasures have been counted <br>
 	 * @param nameTreasure String. Variable that saves the name of the treasure. nameTreasure != ""
@@ -111,7 +109,9 @@ public class Level {
 	public int numberTreasures(String nameTreasure) {
 		int counter = 0;
 		for (int i = 0; i < treasures.length; i++) {
-			if (treasures[i].getName().equals(nameTreasure)) counter+=1;
+			if (treasures[i] != null) {
+				if (treasures[i].getName().equals(nameTreasure)) counter+=1;
+			}
 		}
 		return counter;
 	}
@@ -127,7 +127,9 @@ public class Level {
 	public int numberEnemies(int enemyType) {
 		int counter = 0;
 		for (int i = 0; i < enemies.length; i++) {
-			if (enemies[i].getType().equals(EnemyType.values()[enemyType])) counter += 1;
+			if (enemies[i] != null){
+				if (enemies[i].getType().equals(EnemyType.values()[enemyType])) counter += 1;
+			}
 		}
 		return counter;
 	}
@@ -152,10 +154,10 @@ public class Level {
 
 	/**
 	 * <b>Name:generousEnemyIndex</b><br>
-	 * This method looks for the enemy that gives themost points to the olayer when its defeated.
+	 * This method looks for the enemy that gives the most points to the player when its defeated.
 	 * <b>Pre:</b> The enemies exist <br>
 	 * <b>Pos:</b> The enemy with the most points have been found. <br>
-	 * @return an int that containsthe index if the location of the most generous enemy that gives the player in the array
+	 * @return an int that contains the index if the location of the most generous enemy that gives the player in the array
 	 */
 	public int generousEnemyIndex() {
 		int enemyIndex = 0;
@@ -181,8 +183,9 @@ public class Level {
 	public String showEnemy() {
 		String message = "";
 		for (int i = 0; i < enemies.length; i++) {
-			if (enemies[i] != null) message += enemies[i].getIdName()+",";
+			if (enemies[i] != null) message += enemies[i].getIdName()+", ";
 		}
+		if (message.equals("")) return "No enemies registered yet";
 		return message.substring(0, enemies.length-2);
 	}
 
@@ -191,10 +194,11 @@ public class Level {
 	 * This method allows to show the information of an enemy
 	 * <b>Pre:</b> The parameters must be different from null <br>
 	 * <b>Pos:</b> The enemies have been displayed <br>
-	 * @param indexEnemy int. Variabl that saves the index where the enemy is saved in the array
+	 * @param indexEnemy int. Variable that saves the index where the enemy is saved in the array
 	 * @return q String that contains the information of the enemy
 	 */
 	public String showEnemy(int indexEnemy) {
+		if (enemies[indexEnemy] == null) return "No enemy registered yet";
 		return enemies[indexEnemy].toString();
 	}
 
@@ -208,22 +212,23 @@ public class Level {
 	public String showTreasure() {
 		String message = "";
 		for (int i = 0; i < treasures.length; i ++) {
-			if (treasures[i] != null) message += treasures[i].getName()+",";
+			if (treasures[i] != null) message += treasures[i].getName()+", ";
 		}
+		if (message.equals("")) return "No treasures registered yet";
 		return message.substring(0, treasures.length-2);
 	}
 
 	/**
 	 * <b>Name:consonantNumberNames</b><br>
-	 * This method counts the consontants of the names of the enemies
+	 * This method counts the consonants of the names of the enemies
 	 * <b>Pre:</b> The enemies exist <br>
-	 * <b>Pos:</b> The consontants of the names have been counted <br>
-	 * @return an int with the number of the consontants of the names
+	 * <b>Pos:</b> The consonants of the names have been counted <br>
+	 * @return an int with the number of the consonants of the names
 	 */
 	public int consonantNumberNames() {
 		String name = "";
 		for (int i = 0; i < enemies.length; i++) {
-			name += enemies[i].getIdName();
+			if (enemies[i] != null) name += enemies[i].getIdName();
 		}
 		return name.replaceAll("[AaEeIiOoUu[^A-Za-z]]","").length();
 	}
@@ -241,27 +246,7 @@ public class Level {
 	}
 
 	//Setters and getters
-	public int getIdLevel() {
-		return idLevel;
-	}
-
-	public void setIdLevel(int idLevel) {
-		this.idLevel = idLevel;
-	}
-
 	public int getScoreNextLevel() {
 		return scoreNextLevel;
-	}
-
-	public void setScoreNextLevel(int scoreNextLevel) {
-		this.scoreNextLevel = scoreNextLevel;
-	}
-
-	public String getDifficulty() {
-		return difficulty.name();
-	}
-
-	public void setDifficulty(int difficulty) {
-		this.difficulty = Difficulty.values()[difficulty];
 	}
 }
